@@ -15,13 +15,29 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # written by: Jeff Ortel ( jortel@redhat.com )
+import ast
+import os
 
-import suds
 from setuptools import setup, find_packages
+
+
+class VersionFinder(ast.NodeVisitor):
+    def __init__(self):
+        self.version = None
+
+    def visit_Assign(self, node):
+        if getattr(node.targets[0], 'id', None) == '__version__':
+            self.version = node.value.s
+
+
+with open(os.path.join('suds', '__init__.py')) as open_file:
+    finder = VersionFinder()
+    finder.visit(ast.parse(open_file.read()))
+
 
 setup(
     name="suds-ng",
-    version=suds.__version__,
+    version=finder.version,
     description="Lightweight SOAP client - fork of suds",
     author="Felix Yan",
     author_email="felixonmars@gmail.com",
