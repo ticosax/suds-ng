@@ -96,7 +96,7 @@ class Repr:
         self.x = x
 
     def __str__(self):
-        return repr(self.x)
+        return repr(str(self.x))
 
 #
 # Utility
